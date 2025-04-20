@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .page-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        }
+
+        .table thead th {
+            background-color: #0d6efd;
+            color: #fff;
+            vertical-align: middle;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .btn-action {
+            margin: 0 5px;
+        }
+
+        .no-users {
+            text-align: center;
+            color: #888;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container page-container">
+         <!-- Nút quay lại -->
+        <a href="{{ url_for('admin.index') }}" class="back-btn">← Quay về trang Admin</a>
+        <h2 class="page-title">👥 Manage Users</h2>
+
+        {% if users %}
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%">ID</th>
+                            <th style="width: 60%">Email</th>
+                            <th style="width: 30%">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="btn btn-sm btn-warning btn-action">✏️ Edit</a>
+                                <a href="{{ url_for('admin.delete_user', user_id=user.id) }}" class="btn btn-sm btn-danger btn-action" onclick="return confirm('Are you sure you want to delete this user?')">🗑️ Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="no-users">No users found.</p>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

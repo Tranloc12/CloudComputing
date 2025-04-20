@@ -1,9 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask_login import UserMixin
+
 
 db = SQLAlchemy()
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -13,6 +15,12 @@ class User(db.Model):
     avatar_url = db.Column(db.Text)
     role = db.Column(db.Enum('user', 'admin'), default='user')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_admin = db.Column(db.Boolean, default=False)
+
+    @property
+    def is_admin(self):
+        return self.role == 'admin'
+
 
 class Product(db.Model):
     __tablename__ = 'products'
