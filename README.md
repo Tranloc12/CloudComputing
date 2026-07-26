@@ -28,63 +28,11 @@
 * Hỗ trợ xác thực hai yếu tố (**MFA**) và mã hóa dữ liệu trên đường truyền (HTTPS/TLS) & lưu trữ.
 ---
 ## 2. 🏛️ KIẾN TRÚC & DỊCH VỤ AWS SỬ DỤNG
-|
- Dịch Vụ AWS 
-|
- Vai Trò & Chức Năng Trong Hệ Thống 
-|
-|
-:---
-|
-:---
-|
-|
-**
-Amazon Cognito User Pool
-**
-|
- Quản lý đăng ký, đăng nhập, quên mật khẩu, gửi email xác thực và phát hành các JWT Tokens (
-`ID Token`
-, 
-`Access Token`
-, 
-`Refresh Token`
-). 
-|
-|
-**
-Amazon Cognito Identity Pool
-**
-|
- Đổi JWT Token lấy thông tin xác thực AWS tạm thời (
-`AccessKeyId`
-, 
-`SecretAccessKey`
-, 
-`SessionToken`
-). 
-|
-|
-**
-AWS IAM (Identity & Access Management)
-**
-|
- Định nghĩa IAM Roles, IAM Policies để phân quyền chi tiết cho từng nhóm người dùng (Admin, User, Guest). 
-|
-|
-**
-AWS S3 (Simple Storage Service)
-**
-|
- Lưu trữ dữ liệu và tài nguyên người dùng với chính sách bảo mật (Bucket Policy) nghiêm ngặt. 
-|
-|
-**
-AWS CloudWatch
-**
-|
- Ghi log và giám sát các sự kiện đăng nhập, cảnh báo các truy cập bất thường. 
-|
+* 🔐 **Amazon Cognito User Pool**: Quản lý đăng ký, đăng nhập, gửi email OTP xác thực và phát hành bộ 3 JWT Tokens (`ID Token`, `Access Token`, `Refresh Token`).
+* 🛡️ **Amazon Cognito Identity Pool**: Đổi JWT Token lấy credentials tạm thời của AWS (`AccessKeyId`, `SecretAccessKey`, `SessionToken`).
+* 📜 **AWS IAM (Identity & Access Management)**: Định nghĩa IAM Roles & Policies để phân quyền truy cập tài nguyên cho các nhóm người dùng (Admin, User).
+* 🗄️ **AWS S3 (Simple Storage Service)**: Lưu trữ tài nguyên, tệp tin người dùng bảo mật dựa trên Bucket Policy.
+* 📈 **AWS CloudWatch**: Ghi log giám sát sự kiện đăng nhập, phát hiện và cảnh báo các hành vi truy cập bất thường.
 ---
 ## 3. 📁 CẤU TRÚC THƯ MỤC DỰ ÁN
 ```text
@@ -124,18 +72,14 @@ CloudComputing/
 ---
 ## 5. 📊 BẢNG KỊCH BẢN KIỂM THỬ BẢO MẬT MẪU
 |
- Test Case ID 
+ ID 
 |
- Chức Năng Kiểm Thử 
+ Chức Năng 
 |
- Dữ Liệu Đầu Vào 
-|
- Kết Quả Mong Đợi 
+ Kịch Bản Kiểm Thử 
 |
  Kết Quả 
 |
-|
-:---
 |
 :---
 |
@@ -150,12 +94,9 @@ CloudComputing/
 TC_SEC_01
 **
 |
- Đăng ký tài khoản mới 
+ Đăng ký 
 |
- Email hợp lệ, Password mạnh 
-|
- Tạo User thành công, trạng thái 
-`UNCONFIRMED`
+ Email hợp lệ ➔ Tạo User thành công 
 |
 `PASS`
 |
@@ -164,12 +105,9 @@ TC_SEC_01
 TC_SEC_02
 **
 |
- Nhập OTP xác thực Email 
+ OTP Email 
 |
- Nhập mã OTP gồm 6 chữ số 
-|
- Tài khoản chuyển sang trạng thái 
-`CONFIRMED`
+ Nhập OTP 6 số ➔ Xác nhận tài khoản 
 |
 `PASS`
 |
@@ -178,15 +116,9 @@ TC_SEC_02
 TC_SEC_03
 **
 |
- Đăng nhập tài khoản 
+ Đăng nhập 
 |
- Đúng Username & Password 
-|
- Trả về 
-`AccessToken`
- và 
-`IdToken`
- hợp lệ 
+ Đúng mật khẩu ➔ Trả về JWT Token 
 |
 `PASS`
 |
@@ -195,11 +127,9 @@ TC_SEC_03
 TC_SEC_04
 **
 |
- Đăng nhập sai mật khẩu 
+ Chống Brute-force 
 |
- Nhập sai Password 5 lần 
-|
- Khóa tài khoản tạm thời (Prevent Brute-force) 
+ Nhập sai 5 lần ➔ Tự động khóa tài khoản 
 |
 `PASS`
 |
@@ -208,11 +138,9 @@ TC_SEC_04
 TC_SEC_05
 **
 |
- Truy cập S3 bị cấm 
+ Phân quyền S3 
 |
- Token hết hạn / Không đủ quyền 
-|
- Trả về lỗi 
+ Token hết hạn ➔ Báo lỗi 
 `403 Access Denied`
 |
 `PASS`
